@@ -1,9 +1,10 @@
 {
-  "name": "@store-uii/cli",
+  "name": "@stone-ui/cli",
   "version": "1.0.1",
   "type": "module",
   "bin": {
-    "store-uii": "./dist/cli.js"
+    "stone-ui": "./dist/cli.js",
+    "stone-uii": "./dist/cli.js"
   },
   "exports": {
     ".": "./dist/index.js"
@@ -12,7 +13,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/cli.ts src/index.ts --format esm --dts",
+    "build": "tsup src/cli.ts src/index.ts --format esm --dts && node scripts/copy-templates.mjs",
     "dev": "tsx src/cli.ts",
     "lint": "eslint ."
   },

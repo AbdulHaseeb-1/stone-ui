@@ -1,5 +1,5 @@
 {
-  "name": "@store-uii/core",
+  "name": "@stone-ui/core",
   "version": "1.0.1",
   "type": "module",
   "main": "dist/index.js",
@@ -10,6 +10,10 @@
       "default": "./dist/index.js"
     }
   },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "scripts": {
     "build": "tsup"
   },

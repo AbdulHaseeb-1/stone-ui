@@ -2,6 +2,7 @@
 import { Command } from "commander";
 import { createRequire } from "node:module";
 import { initCommand } from "./commands/init.js";
+import { addCommand } from "./commands/add.js";
 
 const require = createRequire(import.meta.url);
 const pkg = require("../package.json") as { version?: string };
@@ -15,20 +16,19 @@ async function main(argv: string[]) {
   const program = new Command();
 
   program
-    .name("store-uii")
-    .description("Stone UI CLI (runtime-first, enterprise-grade default)")
+    .name("stone-ui")
+    .description("Stone UI CLI (manifest-driven component generator)")
     .version(VERSION)
     .option("--cwd <path>", "Run as if Stone UI was invoked in this directory");
 
   program
     .command("init")
-    .description("Initialize Stone UI runtime setup (install packages + create config + optional CSS import patch)")
+    .description("Initialize Stone UI (detect project, install deps, write config)")
     .option("--yes", "Run non-interactively using defaults", false)
     .option("--pm <pm>", "Package manager: pnpm | npm | yarn | bun")
-    .option("--mode <mode>", "Mode: runtime | hybrid", "runtime")
     .option("--no-install", "Do not install dependencies (only writes config/prints instructions)")
     .option("--no-patch", "Do not patch app entry files for CSS import (only prints instructions)")
-    .option("--overwrite-config", "Overwrite existing store-uii.config.json if present", false)
+    .option("--overwrite-config", "Overwrite existing stone-ui.config.json if present", false)
     .action(async (opts) => {
       const globals = program.opts<GlobalOptions>();
       await initCommand({
@@ -37,14 +37,19 @@ async function main(argv: string[]) {
       });
     });
 
-  // Stubs for future commands
   program
-    .command("eject")
-    .description("Eject components/wrappers into your repo (optional workflow)")
-    .argument("[items...]", "Items to eject (e.g., button neon-border)")
-    .action(() => {
-      console.log("Not implemented yet: eject");
-      process.exitCode = 1;
+    .command("add")
+    .description("Add Stone UI components to your project")
+    .argument("<components...>", "Component names (e.g., button neon-border)")
+    .option("--overwrite", "Overwrite existing files", false)
+    .option("--yes", "Skip prompts and use defaults", false)
+    .action(async (components: string[], opts) => {
+      const globals = program.opts<GlobalOptions>();
+      await addCommand({
+        ...opts,
+        components,
+        cwd: globals.cwd,
+      });
     });
 
   program
@@ -67,6 +72,6 @@ async function main(argv: string[]) {
 }
 
 main(process.argv).catch((err) => {
-  console.error("[store-uii] Fatal error:", err instanceof Error ? err.message : err);
+  console.error("[stone-ui] Fatal error:", err instanceof Error ? err.message : err);
   process.exitCode = 1;
 });

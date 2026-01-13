@@ -1,5 +1,5 @@
 {
-  "name": "@store-uii/styles",
+  "name": "@stone-ui/styles",
   "version": "1.0.1",
   "type": "module",
   "files": [
@@ -7,6 +7,7 @@
   ],
   "exports": {
     ".": "./dist/stone.css",
+    "./stone.css": "./dist/stone.css",
     "./dist/stone.css": "./dist/stone.css"
   },
   "style": "./dist/stone.css",
