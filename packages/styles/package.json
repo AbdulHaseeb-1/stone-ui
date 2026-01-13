@@ -1,9 +1,12 @@
 {
-  "name": "@store-uii/styles",
+  "name": "@stone-ui/styles",
   "version": "1.0.1",
   "type": "module",
   "files": [
     "dist"
+  ],
+  "sideEffects": [
+    "./dist/stone.css"
   ],
   "exports": {
     ".": "./dist/stone.css",

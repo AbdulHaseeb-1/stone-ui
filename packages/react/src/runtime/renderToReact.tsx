@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ComponentBlueprint, RenderContext, Node } from "@store-uii/core";
+import { ComponentBlueprint, RenderContext, Node } from "@stone-ui/core";
 import { DefaultReactHostAdapter, type ReactHostAdapter } from "../adapter/ReactHostAdapter.js";
 
 // Optional wrapper support (future-ready). If you already have wrappers, keep this.
@@ -17,7 +17,7 @@ export type RenderOptions = {
 
 /**
  * Render a core blueprint into React nodes.
- * This is the "bridge" between @store-uii/core and React.
+ * This is the "bridge" between @stone-ui/core and React.
  */
 export function renderToReact<TProps extends Record<string, unknown>>(
   blueprint: ComponentBlueprint<TProps>,

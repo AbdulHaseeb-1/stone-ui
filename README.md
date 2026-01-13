@@ -3,18 +3,18 @@
 Framework-agnostic component blueprints with a React adapter.
 
 ## Packages
-- `@store-uii/core`: blueprint definitions and node composition utilities.
-- `@store-uii/react`: React renderer and primitives.
+- `@stone-ui/core`: blueprint definitions and node composition utilities.
+- `@stone-ui/react`: React renderer and primitives.
 
 ## Install
 ```bash
-pnpm add @store-uii/react @store-uii/styles
+pnpm add @stone-ui/react @stone-ui/styles
 ```
 
 ## Usage (React)
 ```tsx
-import "@store-uii/styles/dist/stone.css";
-import { Button } from "@store-uii/react";
+import "@stone-ui/styles/dist/stone.css";
+import { Button } from "@stone-ui/react";
 
 export function Example() {
   return (
@@ -28,8 +28,8 @@ export function Example() {
 ## Usage (Blueprint -> React)
 ```tsx
 import * as React from "react";
-import { ButtonBlueprint } from "@store-uii/core";
-import { renderToReact } from "@store-uii/react";
+import { ButtonBlueprint } from "@stone-ui/core";
+import { renderToReact } from "@stone-ui/react";
 
 const blueprint = new ButtonBlueprint();
 

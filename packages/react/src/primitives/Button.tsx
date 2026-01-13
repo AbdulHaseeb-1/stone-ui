@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ButtonBlueprint, type ButtonProps } from "@store-uii/core";
+import { ButtonBlueprint, type ButtonProps } from "@stone-ui/core";
 import { renderToReact } from "../runtime/renderToReact.js";
 
 const blueprint = new ButtonBlueprint();
