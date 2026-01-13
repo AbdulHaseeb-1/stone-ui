@@ -1,5 +1,5 @@
 {
-  "name": "@store-uii/react",
+  "name": "@stone-ui/react",
   "version": "1.0.1",
   "type": "module",
   "main": "dist/index.js",
@@ -14,14 +14,18 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@store-uii/core": "workspace:*"
+    "@stone-ui/core": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"
   },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "devDependencies": {
     "@types/react": "^19.2.8",
-    "typescript": "^5.9.3",
-        "tsup": "^8.5.1"
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   }
 }

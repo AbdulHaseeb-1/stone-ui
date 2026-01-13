@@ -1,0 +1,23 @@
+{
+  "schema": "stone-ui@1",
+  "mode": "runtime",
+  "framework": "react",
+  "projectType": "unknown",
+  "paths": {
+    "outputDir": "src/components/stone-ui",
+    "barrelFile": "src/components/stone-ui/index.ts",
+    "utilsDir": "src/components/stone-ui/utils"
+  },
+  "styles": {
+    "strategy": "runtime",
+    "runtimeImport": "@stone-ui/styles/dist/stone.css",
+    "entryFile": "src/main.tsx"
+  },
+  "eject": {
+    "language": "ts",
+    "includeUtils": true,
+    "includeWrappers": true,
+    "format": "prettier"
+  },
+  "packageManager": "npm"
+}

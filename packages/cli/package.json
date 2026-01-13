@@ -1,8 +1,9 @@
 {
-  "name": "@store-uii/cli",
+  "name": "@stone-ui/cli",
   "version": "1.0.1",
   "type": "module",
   "bin": {
+    "stone-ui": "./dist/cli.js",
     "store-uii": "./dist/cli.js"
   },
   "exports": {
