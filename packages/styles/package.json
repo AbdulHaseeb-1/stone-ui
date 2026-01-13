@@ -1,0 +1,18 @@
+{
+  "name": "@store-uii/styles",
+  "version": "1.0.1",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/stone.css",
+    "./dist/stone.css": "./dist/stone.css"
+  },
+  "style": "./dist/stone.css",
+  "scripts": {
+    "build": "echo \"styles already built\"",
+    "lint": "echo \"lint styles\"",
+    "test": "echo \"test styles\""
+  }
+}

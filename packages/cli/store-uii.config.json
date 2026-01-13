@@ -1,0 +1,25 @@
+{
+  "schema": "store-uii@1",
+  "mode": "runtime",
+  "framework": "react",
+  "projectType": "unknown",
+  "paths": {
+    "outputDir": "src/components/store-uii",
+    "barrelFile": "src/components/store-uii/index.ts",
+    "stylesEntry": "D:/responsive-react/packages/cli/src/index.ts"
+  },
+  "imports": {
+    "runtime": {
+      "react": "@store-uii/react",
+      "styles": "@store-uii/styles/dist/stone.css"
+    }
+  },
+  "eject": {
+    "language": "ts",
+    "styleStrategy": "tailwind-cva",
+    "includeUtils": true,
+    "includeWrappers": true,
+    "format": "prettier"
+  },
+  "packageManager": "npm"
+}

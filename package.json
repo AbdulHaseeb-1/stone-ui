@@ -1,0 +1,30 @@
+{
+  "name": "store-uii",
+  "version": "1.0.1",
+  "private": false,
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "changeset": "changeset",
+    "release": "changeset publish",
+    "cli:dev": "pnpm --filter ./packages/cli dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.26.2",
+  "devDependencies": {
+    "@types/node": "^20.19.28",
+    "turbo": "^2.7.4",
+    "typescript": "^5.9.3",
+    "tsup": "^8.5.1"
+  }
+}

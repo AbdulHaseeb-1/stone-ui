@@ -1,0 +1,30 @@
+{
+  "name": "@store-uii/cli",
+  "version": "1.0.1",
+  "type": "module",
+  "bin": {
+    "store-uii": "./dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/cli.ts src/index.ts --format esm --dts",
+    "dev": "tsx src/cli.ts",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
