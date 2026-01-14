@@ -1,5 +1,5 @@
 {
-  "name": "@brick-ui/core",
+  "name": "@oxitron-ui/core",
   "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",

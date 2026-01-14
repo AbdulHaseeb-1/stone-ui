@@ -48,7 +48,7 @@ importers:
 
   packages/react:
     dependencies:
-      '@brick-ui/core':
+      '@oxitron-ui/core':
         specifier: workspace:*
         version: link:../core
       react:

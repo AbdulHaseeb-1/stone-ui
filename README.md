@@ -11,9 +11,9 @@ Brick UI lets you compose UI from blueprints in any runtime, then render them th
 - CLI for scaffolding components into existing apps.
 
 ## Packages
-- `@brick-ui/core`: blueprint definitions and node composition utilities.
-- `@brick-ui/react`: React renderer and primitives.
-- `@brick-ui/cli`: project initializer and component generator.
+- `@oxitron-ui/core`: blueprint definitions and node composition utilities.
+- `@oxitron-ui/react`: React renderer and primitives.
+- `oxitron-ui`: CLI project initializer and component generator.
 
 ## Requirements
 - React 18+ (for the React adapter).
@@ -21,12 +21,12 @@ Brick UI lets you compose UI from blueprints in any runtime, then render them th
 
 ## Install
 ```bash
-pnpm add @brick-ui/react
+pnpm add @oxitron-ui/react
 ```
 
 ## Quick Start (React)
 ```tsx
-import { Button } from "@brick-ui/react";
+import { Button } from "@oxitron-ui/react";
 
 export function Example() {
   return (
@@ -51,17 +51,17 @@ Typical file locations:
 ## CLI (ShadCN-style)
 Initialize and add components to an existing project:
 ```bash
-npx @brick-ui/cli init
-npx @brick-ui/cli add button
-npx @brick-ui/cli add card
-npx @brick-ui/cli add neon-border
+npx oxitron-ui init
+npx oxitron-ui add button
+npx oxitron-ui add card
+npx oxitron-ui add neon-border
 ```
 
 ## Examples
 
 ### Button
 ```tsx
-import { Button } from "@brick-ui/react";
+import { Button } from "@oxitron-ui/react";
 
 export function Example() {
   return (
@@ -75,7 +75,7 @@ export function Example() {
 
 ### Card
 ```tsx
-import { Card, CardBody, CardFooter, CardHeader } from "@brick-ui/react";
+import { Card, CardBody, CardFooter, CardHeader } from "@oxitron-ui/react";
 
 export function Example() {
   return (
@@ -93,7 +93,7 @@ export function Example() {
 
 ### Neon Border Wrapper
 ```tsx
-import { NeonBorder } from "@brick-ui/react";
+import { NeonBorder } from "@oxitron-ui/react";
 
 export function Example() {
   return (
@@ -107,8 +107,8 @@ export function Example() {
 ## Blueprint Usage (Core -> React)
 ```tsx
 import * as React from "react";
-import { ButtonBlueprint } from "@brick-ui/core";
-import { renderToReact } from "@brick-ui/react";
+import { ButtonBlueprint } from "@oxitron-ui/core";
+import { renderToReact } from "@oxitron-ui/react";
 
 const blueprint = new ButtonBlueprint();
 

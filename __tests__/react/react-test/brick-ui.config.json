@@ -1,15 +1,15 @@
 {
-  "schema": "brick-ui@1",
+  "schema": "oxitron-ui@1",
   "framework": "react",
   "projectType": "vite-react",
   "language": "ts",
   "packageManager": "npm",
   "paths": {
-    "outputDir": "src/components/brick-ui",
-    "primitivesDir": "src/components/brick-ui/primitives",
-    "wrappersDir": "src/components/brick-ui/wrappers",
-    "utilsDir": "src/components/brick-ui/utils",
-    "barrelFile": "src/components/brick-ui/index.ts"
+    "outputDir": "src/components/oxitron-ui",
+    "primitivesDir": "src/components/oxitron-ui/primitives",
+    "wrappersDir": "src/components/oxitron-ui/wrappers",
+    "utilsDir": "src/components/oxitron-ui/utils",
+    "barrelFile": "src/components/oxitron-ui/index.ts"
   },
   "styles": {
     "strategy": "tailwind"

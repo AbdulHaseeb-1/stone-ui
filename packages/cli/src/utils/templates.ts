@@ -15,6 +15,6 @@ export function resolveTemplateRoot(importMetaUrl: string): string {
   }
 
   throw new Error(
-    "Stone UI templates not found. Ensure templates are packaged with @brick-ui/cli."
+    "Oxitron UI templates not found. Ensure templates are packaged with oxitron-ui."
   );
 }

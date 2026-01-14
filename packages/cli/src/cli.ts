@@ -16,7 +16,7 @@ async function main(argv: string[]) {
   const program = new Command();
 
   program
-    .name("brick-ui")
+    .name("oxitron-ui")
     .description("Stone UI CLI (manifest-driven component generator)")
     .version(VERSION)
     .option("--cwd <path>", "Run as if Stone UI was invoked in this directory");
@@ -25,7 +25,7 @@ async function main(argv: string[]) {
     .command("init")
     .description("Initialize Stone UI (detect project, write config, check Tailwind CSS)")
     .option("--pm <pm>", "Package manager: pnpm | npm | yarn | bun")
-    .option("--overwrite-config", "Overwrite existing brick-ui.config.json if present", false)
+    .option("--overwrite-config", "Overwrite existing oxitron-ui.config.json if present", false)
     .action(async (opts) => {
       const globals = program.opts<GlobalOptions>();
       await initCommand({
@@ -69,6 +69,6 @@ async function main(argv: string[]) {
 }
 
 main(process.argv).catch((err) => {
-  console.error("[brick-ui] Fatal error:", err instanceof Error ? err.message : err);
+  console.error("[oxitron-ui] Fatal error:", err instanceof Error ? err.message : err);
   process.exitCode = 1;
 });

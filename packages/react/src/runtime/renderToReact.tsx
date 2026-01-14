@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ComponentBlueprint, RenderContext, Node } from "@brick-ui/core";
+import { ComponentBlueprint, RenderContext, Node } from "@oxitron-ui/core";
 import { DefaultReactHostAdapter, type ReactHostAdapter } from "../adapter/ReactHostAdapter.js";
 
 // Optional wrapper support (future-ready). If you already have wrappers, keep this.
@@ -17,7 +17,7 @@ export type RenderOptions = {
 
 /**
  * Render a core blueprint into React nodes.
- * This is the "bridge" between @brick-ui/core and React.
+ * This is the "bridge" between @oxitron-ui/core and React.
  */
 export function renderToReact<TProps extends Record<string, unknown>>(
   blueprint: ComponentBlueprint<TProps>,

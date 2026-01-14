@@ -1,10 +1,9 @@
 {
-  "name": "@brick-ui/cli",
+  "name": "@oxitron-ui/cli",
   "version": "1.0.0",
   "type": "module",
   "bin": {
-    "brick-ui": "./dist/cli.js",
-    "brick-uii": "./dist/cli.js"
+    "oxitron-ui": "./dist/cli.js"
   },
   "exports": {
     ".": "./dist/index.js"

@@ -23,7 +23,7 @@ type InitOptions = {
 };
 
 type StoneConfig = {
-  schema: "brick-ui@1";
+  schema: "oxitron-ui@1";
   framework: Framework;
   projectType: ProjectType;
   language: "ts" | "js";
@@ -40,7 +40,7 @@ type StoneConfig = {
   };
 };
 
-const CONFIG_FILE = "brick-ui.config.json";
+const CONFIG_FILE = "oxitron-ui.config.json";
 
 /**
  * Main initialization command that sets up Stone UI in a project
@@ -68,7 +68,7 @@ export async function initCommand(opts: InitOptions): Promise<void> {
     );
   }
 
-  const outputDir = "src/components/brick-ui";
+  const outputDir = "src/components/oxitron-ui";
   const primitivesDir = path.posix.join(outputDir, "primitives");
   const wrappersDir = path.posix.join(outputDir, "wrappers");
   const utilsDir = path.posix.join(outputDir, "utils");
@@ -78,7 +78,7 @@ export async function initCommand(opts: InitOptions): Promise<void> {
   );
 
   const config: StoneConfig = {
-    schema: "brick-ui@1",
+    schema: "oxitron-ui@1",
     framework,
     projectType,
     language,
@@ -98,14 +98,14 @@ export async function initCommand(opts: InitOptions): Promise<void> {
   const progress = createProgress(2);
 
   await writeConfig(cwd, config, Boolean(opts.overwriteConfig));
-  progress.step("Wrote brick-ui.config.json");
+  progress.step("Wrote oxitron-ui.config.json");
 
   const hasTailwind = detectTailwind(cwd);
   if (hasTailwind) {
-    log.success("[brick-ui:init] Tailwind CSS detected.");
+    log.success("[oxitron-ui:init] Tailwind CSS detected.");
   } else {
     log.warn(
-      "[brick-ui:init] Tailwind CSS not detected. Components use Tailwind classes."
+      "[oxitron-ui:init] Tailwind CSS not detected. Components use Tailwind classes."
     );
     printTailwindInstructions(projectType);
   }
@@ -114,14 +114,14 @@ export async function initCommand(opts: InitOptions): Promise<void> {
   progress.done("Initialization complete");
 
   log.success("");
-  log.success("[brick-ui:init] Complete.");
+  log.success("[oxitron-ui:init] Complete.");
   log.info(`- Framework: ${framework}`);
   log.info(`- Project: ${projectType}`);
   log.info(`- Package manager: ${pm}`);
   log.info(`- Config: ${CONFIG_FILE}`);
   log.info("");
   log.info("Next:");
-  log.info(`  npx @brick-ui/cli add button`);
+  log.info(`  npx oxitron-ui add button`);
 }
 
 /**
@@ -178,7 +178,7 @@ function detectFramework(cwd: string): Framework {
     if (deps.vue) return "vue";
     if (deps.svelte) return "svelte";
   } catch (err) {
-    log.warn(`[brick-ui:init] Could not parse package.json: ${err}`);
+    log.warn(`[oxitron-ui:init] Could not parse package.json: ${err}`);
   }
   return "unknown";
 }
@@ -213,7 +213,7 @@ function detectProjectType(cwd: string): ProjectType {
     if (deps.vite && deps.react) return "vite-react";
     if (deps["react-scripts"]) return "cra";
   } catch (err) {
-    log.warn(`[brick-ui:init] Could not parse package.json: ${err}`);
+    log.warn(`[oxitron-ui:init] Could not parse package.json: ${err}`);
   }
 
   return "unknown";
@@ -234,21 +234,21 @@ async function writeConfig(
   const exists = fssync.existsSync(filePath);
 
   if (exists && !overwrite) {
-    log.warn(`[brick-ui:init] Config already exists: ${CONFIG_FILE}`);
-    log.warn(`[brick-ui:init] Use --overwrite-config to replace it.`);
+    log.warn(`[oxitron-ui:init] Config already exists: ${CONFIG_FILE}`);
+    log.warn(`[oxitron-ui:init] Use --overwrite-config to replace it.`);
     return;
   }
 
   const json = JSON.stringify(config, null, 2) + "\n";
   await fs.writeFile(filePath, json, "utf8");
   log.success(
-    `[brick-ui:init] ${exists ? "Overwrote" : "Wrote"} ${CONFIG_FILE}`
+    `[oxitron-ui:init] ${exists ? "Overwrote" : "Wrote"} ${CONFIG_FILE}`
   );
 }
 
 function printTailwindInstructions(projectType: ProjectType): void {
   log.info("");
-  log.info("[brick-ui:init] Tailwind CSS setup:");
+  log.info("[oxitron-ui:init] Tailwind CSS setup:");
   log.info("Install tailwindcss and follow the setup guide for your framework.");
   log.info('Ensure your global CSS includes: @import "tailwindcss";');
   log.info("");

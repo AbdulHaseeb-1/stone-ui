@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { Node } from "@brick-ui/core";
+import type { Node } from "@oxitron-ui/core";
 
 export interface ReactHostAdapter {
   toReactNode(node: Node | string): React.ReactNode;

@@ -1,5 +1,5 @@
 {
-  "name": "@brick-ui/styles",
+  "name": "@oxitron-ui/styles",
   "version": "1.0.0",
   "type": "module",
   "deprecated": "Brick UI now uses Tailwind utility classes; no runtime CSS is shipped.",

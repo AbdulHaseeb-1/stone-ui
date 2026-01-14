@@ -1,6 +1,6 @@
 
 import './App.css'
-import { Button, Card, CardBody, NeonBorder } from './components/brick-ui'
+import { Button, Card, CardBody, NeonBorder } from './components/oxitron-ui'
 
 function App() {
 
@@ -9,7 +9,6 @@ function App() {
       <Card>
         <CardBody>
           <NeonBorder>
-
             <Button>Hello</Button>
           </NeonBorder>
         </CardBody>
