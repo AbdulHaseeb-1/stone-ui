@@ -1,6 +1,6 @@
 {
-  "name": "@stone-ui/react",
-  "version": "1.0.1",
+  "name": "@brick-ui/react",
+  "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,7 +18,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@stone-ui/core": "workspace:*"
+    "@brick-ui/core": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"

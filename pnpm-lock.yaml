@@ -48,7 +48,7 @@ importers:
 
   packages/react:
     dependencies:
-      '@stone-ui/core':
+      '@brick-ui/core':
         specifier: workspace:*
         version: link:../core
       react:
@@ -435,7 +435,7 @@ packages:
       picomatch:
         optional: true
 
-  fix-dts-default-cjs-exports@1.0.1:
+  fix-dts-default-cjs-exports@1.0.0:
     resolution: {integrity: sha512-pVIECanWFC61Hzl2+oOCtoJ3F17kglZC/6N94eRWycFgBH35hHx0Li604ZIzhseh97mf2p0cv7vVrOZGoqhlEg==}
 
   fsevents@2.3.3:
@@ -889,7 +889,7 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.3
 
-  fix-dts-default-cjs-exports@1.0.1:
+  fix-dts-default-cjs-exports@1.0.0:
     dependencies:
       magic-string: 0.30.21
       mlly: 1.8.0
@@ -1047,7 +1047,7 @@ snapshots:
       consola: 3.4.2
       debug: 4.4.3
       esbuild: 0.27.2
-      fix-dts-default-cjs-exports: 1.0.1
+      fix-dts-default-cjs-exports: 1.0.0
       joycon: 3.1.1
       picocolors: 1.1.1
       postcss-load-config: 6.0.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.21.0)

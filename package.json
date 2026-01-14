@@ -1,7 +1,7 @@
 {
-  "name": "stone-ui",
-  "version": "1.0.1",
-  "private": true,
+  "name": "brick-ui",
+  "version": "1.0.0",
+  "private": false,
   "description": "",
   "main": "index.js",
   "workspaces": [

@@ -22,11 +22,10 @@ type StoneConfig = {
     primitivesDir?: string;
     wrappersDir?: string;
     utilsDir?: string;
-    localStylesFile?: string;
   };
 };
 
-const CONFIG_FILE = "stone-ui.config.json";
+const CONFIG_FILE = "brick-ui.config.json";
 
 const TEMPLATE_ROOT = resolveTemplateRoot(import.meta.url);
 
@@ -118,7 +117,7 @@ export async function addCommand(options: AddOptions): Promise<void> {
   progress.done("Completed");
 
   log.success("");
-  log.success("[stone-ui:add] Done.");
+  log.success("[brick-ui:add] Done.");
   if (writtenFiles.length) {
     log.info("Created:");
     writtenFiles.forEach((file) => log.muted(`  - ${file}`));
@@ -136,7 +135,7 @@ async function loadConfig(cwd: string): Promise<StoneConfig> {
   const configPath = path.join(cwd, CONFIG_FILE);
   if (!fssync.existsSync(configPath)) {
     throw new Error(
-      `Missing ${CONFIG_FILE}. Run "npx @stone-ui/cli init" first.`
+      `Missing ${CONFIG_FILE}. Run "npx @brick-ui/cli init" first.`
     );
   }
   const raw = await fs.readFile(configPath, "utf8");

@@ -16,19 +16,16 @@ async function main(argv: string[]) {
   const program = new Command();
 
   program
-    .name("stone-ui")
+    .name("brick-ui")
     .description("Stone UI CLI (manifest-driven component generator)")
     .version(VERSION)
     .option("--cwd <path>", "Run as if Stone UI was invoked in this directory");
 
   program
     .command("init")
-    .description("Initialize Stone UI (detect project, install deps, write config)")
-    .option("--yes", "Run non-interactively using defaults", false)
+    .description("Initialize Stone UI (detect project, write config, check Tailwind CSS)")
     .option("--pm <pm>", "Package manager: pnpm | npm | yarn | bun")
-    .option("--no-install", "Do not install dependencies (only writes config/prints instructions)")
-    .option("--no-patch", "Do not patch app entry files for CSS import (only prints instructions)")
-    .option("--overwrite-config", "Overwrite existing stone-ui.config.json if present", false)
+    .option("--overwrite-config", "Overwrite existing brick-ui.config.json if present", false)
     .action(async (opts) => {
       const globals = program.opts<GlobalOptions>();
       await initCommand({
@@ -72,6 +69,6 @@ async function main(argv: string[]) {
 }
 
 main(process.argv).catch((err) => {
-  console.error("[stone-ui] Fatal error:", err instanceof Error ? err.message : err);
+  console.error("[brick-ui] Fatal error:", err instanceof Error ? err.message : err);
   process.exitCode = 1;
 });

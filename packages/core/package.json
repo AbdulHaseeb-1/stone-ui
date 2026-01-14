@@ -1,6 +1,6 @@
 {
-  "name": "@stone-ui/core",
-  "version": "1.0.1",
+  "name": "@brick-ui/core",
+  "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

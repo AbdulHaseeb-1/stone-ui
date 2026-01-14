@@ -1,18 +1,12 @@
 {
-  "name": "@stone-ui/styles",
-  "version": "1.0.1",
+  "name": "@brick-ui/styles",
+  "version": "1.0.0",
   "type": "module",
-  "files": [
-    "dist"
-  ],
-  "exports": {
-    ".": "./dist/stone.css",
-    "./stone.css": "./dist/stone.css",
-    "./dist/stone.css": "./dist/stone.css"
-  },
-  "style": "./dist/stone.css",
+  "deprecated": "Brick UI now uses Tailwind utility classes; no runtime CSS is shipped.",
+  "files": [],
+  "exports": {},
   "scripts": {
-    "build": "echo \"styles already built\"",
+    "build": "echo \"no styles to build\"",
     "lint": "echo \"lint styles\"",
     "test": "echo \"test styles\""
   }

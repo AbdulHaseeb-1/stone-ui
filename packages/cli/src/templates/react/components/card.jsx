@@ -5,7 +5,16 @@ export const Card = React.forwardRef(function Card(
   { className, ...props },
   ref
 ) {
-  return <div ref={ref} className={cn("stone-card", className)} {...props} />;
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "rounded-xl border border-slate-800 bg-slate-950 text-slate-100 p-5 shadow-sm",
+        className
+      )}
+      {...props}
+    />
+  );
 });
 
 Card.displayName = "Card";
@@ -15,7 +24,7 @@ export const CardHeader = React.forwardRef(function CardHeader(
   ref
 ) {
   return (
-    <div ref={ref} className={cn("stone-card__header", className)} {...props} />
+    <div ref={ref} className={cn("text-lg font-semibold", className)} {...props} />
   );
 });
 
@@ -26,7 +35,7 @@ export const CardBody = React.forwardRef(function CardBody(
   ref
 ) {
   return (
-    <div ref={ref} className={cn("stone-card__body", className)} {...props} />
+    <div ref={ref} className={cn("text-slate-200/80", className)} {...props} />
   );
 });
 
@@ -37,7 +46,7 @@ export const CardFooter = React.forwardRef(function CardFooter(
   ref
 ) {
   return (
-    <div ref={ref} className={cn("stone-card__footer", className)} {...props} />
+    <div ref={ref} className={cn("mt-4 flex flex-wrap gap-2", className)} {...props} />
   );
 });
 

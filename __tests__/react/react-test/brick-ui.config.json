@@ -1,7 +1,7 @@
 {
   "schema": "brick-ui@1",
   "framework": "react",
-  "projectType": "unknown",
+  "projectType": "vite-react",
   "language": "ts",
   "packageManager": "npm",
   "paths": {

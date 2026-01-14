@@ -8,7 +8,10 @@ export const NeonBorder = React.forwardRef(function NeonBorder(
   return (
     <div
       ref={ref}
-      className={cn("stone-neon-border", className)}
+      className={cn(
+        "rounded-xl border bg-slate-950/60 p-4 shadow-[0_0_18px_var(--stone-neon-color)] [border-color:var(--stone-neon-color)]",
+        className
+      )}
       style={{ ...style, ["--stone-neon-color"]: glowColor }}
       {...props}
     />

@@ -1,10 +1,10 @@
 {
-  "name": "@stone-ui/cli",
-  "version": "1.0.1",
+  "name": "@brick-ui/cli",
+  "version": "1.0.0",
   "type": "module",
   "bin": {
-    "stone-ui": "./dist/cli.js",
-    "stone-uii": "./dist/cli.js"
+    "brick-ui": "./dist/cli.js",
+    "brick-uii": "./dist/cli.js"
   },
   "exports": {
     ".": "./dist/index.js"
