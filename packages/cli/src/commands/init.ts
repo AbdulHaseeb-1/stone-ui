@@ -2,9 +2,12 @@ import * as fs from "node:fs/promises";
 import * as fssync from "node:fs";
 import * as path from "node:path";
 import { spawnSync } from "node:child_process";
+import { confirm, createProgress, log } from "../utils/terminal.js";
+import { resolveTemplateRoot } from "../utils/templates.js";
 
 type PackageManager = "pnpm" | "npm" | "yarn" | "bun";
-type Mode = "runtime" | "hybrid";
+
+type Framework = "react" | "vue" | "svelte" | "unknown";
 
 type ProjectType =
   | "next-app-router"
@@ -13,54 +16,51 @@ type ProjectType =
   | "cra"
   | "unknown";
 
+type StyleStrategy = "runtime" | "local";
+
 type InitOptions = {
   cwd?: string;
   yes?: boolean;
   pm?: string;
-  mode?: Mode;
   install?: boolean;
   patch?: boolean;
   overwriteConfig?: boolean;
 };
 
 type StoneConfig = {
-  schema: string;
-  mode: Mode;
-  framework: "react";
+  schema: "stone-ui@1";
+  framework: Framework;
   projectType: ProjectType;
+  language: "ts" | "js";
+  packageManager: PackageManager;
   paths: {
     outputDir: string;
+    primitivesDir: string;
+    wrappersDir: string;
+    utilsDir: string;
     barrelFile: string;
     stylesEntry?: string;
+    localStylesFile?: string;
   };
-  imports: {
-    runtime: {
-      react: string;
-      styles: string;
-    };
+  styles: {
+    strategy: StyleStrategy;
+    importPath: string;
   };
-  eject: {
-    language: "ts" | "js";
-    styleStrategy: "tailwind-cva";
-    includeUtils: boolean;
-    includeWrappers: boolean;
-    format: "prettier" | "none";
-  };
-  packageManager: PackageManager;
 };
 
-const CONFIG_FILE = "store-uii.config.json";
-const RUNTIME_DEPS = ["@store-uii/react", "@store-uii/styles"];
-const STYLES_IMPORT = `import "@store-uii/styles/dist/stone.css";`;
+const CONFIG_FILE = "stone-ui.config.json";
+const RUNTIME_STYLE_DEP = "@stone-ui/styles";
+const STYLES_IMPORT = `import "@stone-ui/styles/stone.css";`;
+
+const TEMPLATE_ROOT = resolveTemplateRoot(import.meta.url);
 
 /**
- * Main initialization command that sets up Store-UII in a project
+ * Main initialization command that sets up Stone UI in a project
  * @param opts - Configuration options for initialization
  */
 export async function initCommand(opts: InitOptions): Promise<void> {
   const cwd = path.resolve(opts.cwd ?? process.cwd());
   const yes = Boolean(opts.yes);
-  const mode: Mode = opts.mode === "hybrid" ? "hybrid" : "runtime";
 
   const pkgJsonPath = path.join(cwd, "package.json");
 
@@ -71,90 +71,130 @@ export async function initCommand(opts: InitOptions): Promise<void> {
   }
 
   const pm = normalizePackageManager(opts.pm) ?? detectPackageManager(cwd);
+  const framework = detectFramework(cwd);
   const projectType = detectProjectType(cwd);
   const language = detectTS(cwd) ? "ts" : "js";
 
-  const stylesEntry = detectStylesEntry(cwd, projectType, language);
-  const outputDir = "src/components/store-uii";
+  if (framework !== "react") {
+    throw new Error(
+      `Unsupported framework: ${framework}. Stone UI CLI currently supports React.`
+    );
+  }
+
+  const supportsCssImports = detectCssSupport(cwd, projectType);
+  const stylesEntry = supportsCssImports
+    ? detectStylesEntry(cwd, projectType, language)
+    : null;
+  const outputDir = "src/components/stone-ui";
+  const primitivesDir = path.posix.join(outputDir, "primitives");
+  const wrappersDir = path.posix.join(outputDir, "wrappers");
+  const utilsDir = path.posix.join(outputDir, "utils");
   const barrelFile = path.posix.join(
     outputDir.replace(/\\/g, "/"),
-    "index.ts"
+    `index.${language === "ts" ? "ts" : "js"}`
   );
 
+  const styleStrategy: StyleStrategy = supportsCssImports ? "runtime" : "local";
+  const localStylesFile =
+    styleStrategy === "local"
+      ? path.posix.join(outputDir, "stone-ui.css")
+      : undefined;
+
   const config: StoneConfig = {
-    schema: "store-uii@1",
-    mode,
-    framework: "react",
+    schema: "stone-ui@1",
+    framework,
     projectType,
+    language,
+    packageManager: pm,
     paths: {
       outputDir,
+      primitivesDir,
+      wrappersDir,
+      utilsDir,
       barrelFile,
       stylesEntry: stylesEntry ? normalizeToPosix(stylesEntry) : undefined,
+      localStylesFile,
     },
-    imports: {
-      runtime: {
-        react: "@store-uii/react",
-        styles: "@store-uii/styles/dist/stone.css",
-      },
+    styles: {
+      strategy: styleStrategy,
+      importPath: "@stone-ui/styles/stone.css",
     },
-    eject: {
-      language,
-      styleStrategy: "tailwind-cva",
-      includeUtils: true,
-      includeWrappers: true,
-      format: "prettier",
-    },
-    packageManager: pm,
   };
 
+  const progress = createProgress(3);
+
   await writeConfig(cwd, config, Boolean(opts.overwriteConfig));
+  progress.step("Wrote stone-ui.config.json");
 
   const shouldInstall = opts.install !== false;
   const shouldPatch = opts.patch !== false;
 
-  if (shouldInstall) {
-    await installRuntimeDeps(cwd, pm, RUNTIME_DEPS);
-  } else {
-    console.log(`[store-uii:init] Skipping install (--no-install).`);
-  }
-
-  if (shouldPatch) {
-    if (!stylesEntry) {
-      console.log(
-        `[store-uii:init] Could not auto-detect entry file for CSS import.`
-      );
-      printManualCssInstructions(projectType);
-    } else {
-      const patched = await ensureStylesImport(cwd, stylesEntry);
-      if (!patched) {
-        console.log(
-          `[store-uii:init] Styles import already present: ${normalizeToPosix(
-            stylesEntry
-          )}`
-        );
+  if (styleStrategy === "runtime") {
+    if (shouldInstall) {
+      const ok = yes
+        ? true
+        : await confirm(
+            "Install @stone-ui/styles for runtime CSS import now?",
+            true
+          );
+      if (ok) {
+        await installRuntimeDeps(cwd, pm, [RUNTIME_STYLE_DEP]);
       } else {
-        console.log(
-          `[store-uii:init] Added styles import to: ${normalizeToPosix(
-            stylesEntry
-          )}`
-        );
+        log.warn("[stone-ui:init] Skipped install by user choice.");
       }
+    } else {
+      log.warn("[stone-ui:init] Skipping install (--no-install).");
     }
+    progress.step("Handled style dependency");
+
+    if (shouldPatch) {
+      if (!stylesEntry) {
+        log.warn(
+          "[stone-ui:init] Could not auto-detect entry file for CSS import."
+        );
+        printManualCssInstructions(projectType);
+      } else {
+        const patched = await ensureStylesImport(cwd, stylesEntry);
+        if (!patched) {
+          log.info(
+            `[stone-ui:init] Styles import already present: ${normalizeToPosix(
+              stylesEntry
+            )}`
+          );
+        } else {
+          log.success(
+            `[stone-ui:init] Added styles import to: ${normalizeToPosix(
+              stylesEntry
+            )}`
+          );
+        }
+      }
+    } else {
+      log.warn("[stone-ui:init] Skipping patch (--no-patch).");
+      printManualCssInstructions(projectType);
+    }
+    progress.step("Handled CSS import");
   } else {
-    console.log(`[store-uii:init] Skipping patch (--no-patch).`);
-    printManualCssInstructions(projectType);
+    await writeLocalStyles(cwd, localStylesFile ?? "");
+    progress.step("Generated local CSS file");
+    log.warn(
+      "[stone-ui:init] CSS imports were not detected. Using a local CSS file instead."
+    );
+    printLocalCssInstructions(localStylesFile ?? "");
+    progress.step("Reviewed local CSS instructions");
   }
 
-  console.log("");
-  console.log(`[store-uii:init] Complete.`);
-  console.log(`- Mode: ${mode}`);
-  console.log(`- Project: ${projectType}`);
-  console.log(`- Package manager: ${pm}`);
-  console.log(`- Config: ${CONFIG_FILE}`);
-  console.log("");
-  console.log(`Next:`);
-  console.log(`  import { Button } from "@store-uii/react";`);
-  console.log(`  // CSS: ${STYLES_IMPORT}`);
+  progress.done("Initialization complete");
+
+  log.success("");
+  log.success("[stone-ui:init] Complete.");
+  log.info(`- Framework: ${framework}`);
+  log.info(`- Project: ${projectType}`);
+  log.info(`- Package manager: ${pm}`);
+  log.info(`- Config: ${CONFIG_FILE}`);
+  log.info("");
+  log.info("Next:");
+  log.info(`  npx @stone-ui/cli add button`);
 }
 
 /**
@@ -175,7 +215,6 @@ function normalizePackageManager(value?: string): PackageManager | null {
  * @returns Detected PackageManager
  */
 function detectPackageManager(cwd: string): PackageManager {
-  // Priority order: pnpm > yarn > bun > npm
   if (fssync.existsSync(path.join(cwd, "pnpm-lock.yaml"))) return "pnpm";
   if (fssync.existsSync(path.join(cwd, "yarn.lock"))) return "yarn";
   if (fssync.existsSync(path.join(cwd, "bun.lockb"))) return "bun";
@@ -192,13 +231,26 @@ function detectTS(cwd: string): boolean {
   return fssync.existsSync(path.join(cwd, "tsconfig.json"));
 }
 
+function detectFramework(cwd: string): Framework {
+  const pkgPath = path.join(cwd, "package.json");
+  try {
+    const pkg = JSON.parse(fssync.readFileSync(pkgPath, "utf8"));
+    const deps = { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
+    if (deps.react) return "react";
+    if (deps.vue) return "vue";
+    if (deps.svelte) return "svelte";
+  } catch (err) {
+    log.warn(`[stone-ui:init] Could not parse package.json: ${err}`);
+  }
+  return "unknown";
+}
+
 /**
  * Detects the type of React project based on structure and dependencies
  * @param cwd - Current working directory
  * @returns Detected ProjectType
  */
 function detectProjectType(cwd: string): ProjectType {
-  // Check for Next.js configuration files
   const hasNextConfig =
     fssync.existsSync(path.join(cwd, "next.config.js")) ||
     fssync.existsSync(path.join(cwd, "next.config.mjs")) ||
@@ -215,19 +267,39 @@ function detectProjectType(cwd: string): ProjectType {
     return "next-pages-router";
   }
 
-  // Check package.json for dependencies
   try {
     const pkgPath = path.join(cwd, "package.json");
     const pkg = JSON.parse(fssync.readFileSync(pkgPath, "utf8"));
     const deps = { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
 
-    if (deps["vite"] && deps["react"]) return "vite-react";
+    if (deps.vite && deps.react) return "vite-react";
     if (deps["react-scripts"]) return "cra";
   } catch (err) {
-    console.warn(`[store-uii:init] Could not parse package.json: ${err}`);
+    log.warn(`[stone-ui:init] Could not parse package.json: ${err}`);
   }
 
   return "unknown";
+}
+
+function detectCssSupport(cwd: string, projectType: ProjectType): boolean {
+  if (projectType !== "unknown") return true;
+  try {
+    const pkgPath = path.join(cwd, "package.json");
+    const pkg = JSON.parse(fssync.readFileSync(pkgPath, "utf8"));
+    const deps = { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
+    return Boolean(
+      deps.vite ||
+        deps.webpack ||
+        deps.parcel ||
+        deps.rollup ||
+        deps.next ||
+        deps["react-scripts"] ||
+        deps.postcss ||
+        deps.tailwindcss
+    );
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -242,7 +314,6 @@ function detectStylesEntry(
   projectType: ProjectType,
   lang: "ts" | "js"
 ): string | null {
-  // Next App Router: app/layout.(ts|js)x
   if (projectType === "next-app-router") {
     const candidates = [
       path.join(cwd, "app", `layout.${lang}x`),
@@ -251,7 +322,6 @@ function detectStylesEntry(
     return candidates.find((p) => fssync.existsSync(p)) ?? null;
   }
 
-  // Next Pages Router: pages/_app.(ts|js)x
   if (projectType === "next-pages-router") {
     const candidates = [
       path.join(cwd, "pages", `_app.${lang}x`),
@@ -260,7 +330,6 @@ function detectStylesEntry(
     return candidates.find((p) => fssync.existsSync(p)) ?? null;
   }
 
-  // Vite: src/main.(ts|js)x or src/main.(ts|js)
   if (projectType === "vite-react") {
     const candidates = [
       path.join(cwd, "src", `main.${lang}x`),
@@ -271,7 +340,6 @@ function detectStylesEntry(
     return candidates.find((p) => fssync.existsSync(p)) ?? null;
   }
 
-  // CRA: src/index.(ts|js)x
   if (projectType === "cra") {
     const candidates = [
       path.join(cwd, "src", `index.${lang}x`),
@@ -280,7 +348,6 @@ function detectStylesEntry(
     return candidates.find((p) => fssync.existsSync(p)) ?? null;
   }
 
-  // Unknown: common entry points
   const common = [
     path.join(cwd, "src", `main.${lang}x`),
     path.join(cwd, "src", `index.${lang}x`),
@@ -292,7 +359,7 @@ function detectStylesEntry(
 }
 
 /**
- * Writes the Store-UII configuration file
+ * Writes the Stone UI configuration file
  * @param cwd - Current working directory
  * @param config - Configuration object
  * @param overwrite - Whether to overwrite existing config
@@ -306,15 +373,15 @@ async function writeConfig(
   const exists = fssync.existsSync(filePath);
 
   if (exists && !overwrite) {
-    console.log(`[store-uii:init] Config already exists: ${CONFIG_FILE}`);
-    console.log(`[store-uii:init] Use --overwrite-config to replace it.`);
+    log.warn(`[stone-ui:init] Config already exists: ${CONFIG_FILE}`);
+    log.warn(`[stone-ui:init] Use --overwrite-config to replace it.`);
     return;
   }
 
   const json = JSON.stringify(config, null, 2) + "\n";
   await fs.writeFile(filePath, json, "utf8");
-  console.log(
-    `[store-uii:init] ${exists ? "Overwrote" : "Wrote"} ${CONFIG_FILE}`
+  log.success(
+    `[stone-ui:init] ${exists ? "Overwrote" : "Wrote"} ${CONFIG_FILE}`
   );
 }
 
@@ -331,8 +398,8 @@ async function installRuntimeDeps(
 ): Promise<void> {
   const args = installArgs(pm, deps);
 
-  console.log(`[store-uii:init] Installing runtime deps: ${deps.join(", ")}`);
-  
+  log.info(`[stone-ui:init] Installing deps: ${deps.join(", ")}`);
+
   const res = spawnSync(args.cmd, args.args, {
     cwd,
     stdio: "inherit",
@@ -387,23 +454,32 @@ async function ensureStylesImport(
   try {
     src = await fs.readFile(fullPath, "utf8");
   } catch (err) {
-    console.error(`[store-uii:init] Failed to read entry file: ${err}`);
+    log.error(`[stone-ui:init] Failed to read entry file: ${err}`);
     return false;
   }
 
-  if (src.includes(`@store-uii/styles/dist/stone.css`)) {
-    return false; // already present
+  if (src.includes("@stone-ui/styles/stone.css")) {
+    return false;
   }
 
   const patched = patchImportAtTop(src, STYLES_IMPORT);
-  
+
   try {
     await fs.writeFile(fullPath, patched, "utf8");
     return true;
   } catch (err) {
-    console.error(`[store-uii:init] Failed to write entry file: ${err}`);
+    log.error(`[stone-ui:init] Failed to write entry file: ${err}`);
     return false;
   }
+}
+
+async function writeLocalStyles(cwd: string, relativePath: string): Promise<void> {
+  if (!relativePath) return;
+  const templatePath = path.join(TEMPLATE_ROOT, "styles", "stone.css");
+  const css = await fs.readFile(templatePath, "utf8");
+  const abs = path.join(cwd, relativePath.replace(/\//g, path.sep));
+  await fs.mkdir(path.dirname(abs), { recursive: true });
+  await fs.writeFile(abs, css, "utf8");
 }
 
 /**
@@ -416,34 +492,31 @@ function patchImportAtTop(source: string, importLine: string): string {
   const lines = source.split(/\r?\n/);
 
   let lastImportIndex = -1;
-  let foundNonImport = false;
 
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i].trim();
 
-    // Skip empty lines and comments at the top
     if (l === "" || l.startsWith("//") || l.startsWith("/*")) {
       continue;
     }
 
-    // Track import statements
-    if (l.startsWith("import ") || l.startsWith("import{") || l.startsWith('import"') || l.startsWith("import'")) {
+    if (
+      l.startsWith("import ") ||
+      l.startsWith("import{") ||
+      l.startsWith('import"') ||
+      l.startsWith("import'")
+    ) {
       lastImportIndex = i;
-      foundNonImport = false;
     } else if (lastImportIndex !== -1) {
-      // Found non-import after imports, stop scanning
-      foundNonImport = true;
       break;
     }
   }
 
-  // Insert after last import or at the beginning
   if (lastImportIndex >= 0) {
     lines.splice(lastImportIndex + 1, 0, importLine);
     return lines.join("\n");
   }
 
-  // No imports found, add at the top
   return `${importLine}\n${source}`;
 }
 
@@ -452,29 +525,39 @@ function patchImportAtTop(source: string, importLine: string): string {
  * @param projectType - Type of React project
  */
 function printManualCssInstructions(projectType: ProjectType): void {
-  console.log("");
-  console.log("[store-uii:init] Manual step (CSS import):");
-  console.log(`Add this line near the top of your app entry file:`);
-  console.log(`  ${STYLES_IMPORT}`);
-  console.log("");
+  log.info("");
+  log.info("[stone-ui:init] Manual step (CSS import):");
+  log.info(`Add this line near the top of your app entry file:`);
+  log.info(`  ${STYLES_IMPORT}`);
+  log.info("Rollback: remove the import line if needed.");
+  log.info("");
 
   switch (projectType) {
     case "next-app-router":
-      console.log("Typical file: app/layout.tsx (or src/app/layout.tsx)");
+      log.info("Typical file: app/layout.tsx (or src/app/layout.tsx)");
       break;
     case "next-pages-router":
-      console.log("Typical file: pages/_app.tsx (or src/pages/_app.tsx)");
+      log.info("Typical file: pages/_app.tsx (or src/pages/_app.tsx)");
       break;
     case "vite-react":
-      console.log("Typical file: src/main.tsx");
+      log.info("Typical file: src/main.tsx");
       break;
     case "cra":
-      console.log("Typical file: src/index.tsx");
+      log.info("Typical file: src/index.tsx");
       break;
     default:
-      console.log("Typical file: src/index.tsx or src/main.tsx");
+      log.info("Typical file: src/index.tsx or src/main.tsx");
   }
-  console.log("");
+  log.info("");
+}
+
+function printLocalCssInstructions(localStylesFile: string): void {
+  log.info("");
+  log.info("[stone-ui:init] Manual step (local CSS):");
+  log.info(`Add this file to your app HTML or bundler entry:`);
+  log.info(`  ${localStylesFile}`);
+  log.info("Rollback: remove the link/import if needed.");
+  log.info("");
 }
 
 /**

@@ -1,0 +1,72 @@
+:root {
+  --stone-surface: #0b0f14;
+  --stone-surface-muted: #111827;
+  --stone-border: #1f2937;
+  --stone-text: #f8fafc;
+  --stone-accent: #38bdf8;
+}
+
+.stone-button {
+  appearance: none;
+  border: 1px solid var(--stone-border);
+  background: var(--stone-text);
+  color: #0f172a;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.stone-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.stone-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(56, 189, 248, 0.2);
+}
+
+.stone-button--outline {
+  background: transparent;
+  color: var(--stone-text);
+}
+
+.stone-button--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--stone-text);
+}
+
+.stone-card {
+  border-radius: 0.75rem;
+  background: var(--stone-surface);
+  color: var(--stone-text);
+  border: 1px solid var(--stone-border);
+  padding: 1.25rem;
+}
+
+.stone-card__header {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.stone-card__body {
+  color: rgba(248, 250, 252, 0.82);
+}
+
+.stone-card__footer {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.stone-neon-border {
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--stone-neon-color), transparent 50%);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--stone-neon-color), transparent 50%);
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.35);
+}
